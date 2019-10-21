@@ -1,0 +1,23 @@
+{
+    "name": "foostart/package-product",
+    "description": "Create api product",
+    "keywords": [
+        "foostart",
+        "laravel 5 package product"
+    ],
+    "authors": [
+        {
+            "name": "Foostart",
+            "email": "foostart.com@gmail.com"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Foostart\\Product\\": "/"
+        }
+    },
+    "minimum-stability": "dev"
+}
