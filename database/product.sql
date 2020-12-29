@@ -39,9 +39,9 @@ CREATE TABLE IF NOT EXISTS `posts` (
   `product_description` longtext COLLATE utf8_unicode_ci,
   `product_image` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `product_images` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `product_price_root` float(11) NOT NULL
-  `product_price` float(11) NOT NULL
-  `product_price_sale` float(11) NOT NULL
+  `product_price_root` float(11) NOT NULL,
+  `product_price` float(11) NOT NULL,
+  `product_price_sale` float(11) NOT NULL,
   `category_id` int(11) DEFAULT NULL,
   `cache_comments` text COLLATE utf8_unicode_ci,
   `cache_other_products` text COLLATE utf8_unicode_ci,
