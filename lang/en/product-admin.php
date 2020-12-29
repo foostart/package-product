@@ -52,6 +52,7 @@ return [
         'operations' => 'Operations',
         'updated_at' => 'Updated at',
         'filename' => 'File name',
+        'product-status' => 'Status',
     ],
 
 
@@ -63,7 +64,7 @@ return [
     |
     */
     'pages' => [
-        'title-list' => 'List of product',
+        'title-list' => 'List of products',
         'title-list-search' => 'Search results',
         'title-edit' => 'Edit product',
         'title-add' => 'Add new product',
@@ -89,8 +90,25 @@ return [
         'add' => 'Add',
         'save' => 'Save',
         'delete' => 'Delete',
+        'delete-in-trash' => 'In trash',
+        'delete-forever' => 'Forever',
     ],
 
+
+
+
+
+    /*
+    |-----------------------------------------------------------------------
+    | Hint
+    |-----------------------------------------------------------------------
+    | The list of hint
+    |
+    */
+    'hint'  => [
+        'delete-forever' => 'Delete forever',
+        'delete-in-trash' => 'Delete in trash',
+    ],
 
 
 
@@ -116,20 +134,23 @@ return [
 
     /*
     |-----------------------------------------------------------------------
-    | Description
+    | Descriptions
     |-----------------------------------------------------------------------
-    | Description
+    | Descriptions
     |
     */
     'descriptions' => [
-        'form' => 'product form',
+        'form' => 'Product form',
         'update' => 'Update product',
         'name' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.',
+        'slug' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.',
         'category' => 'Click <a href=":href">here</a> to manage list of categories by token.',
+        'slideshow' => 'Click <a href=":href">here</a> to manage list of slideshow',
         'overview' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.',
         'description' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.',
         'image' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.',
         'files' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.',
+        'status' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.',
         'list' => 'List of items',
         'counters' => 'There are <b>:number</b> items',
         'counter' => 'There is <b>:number</b> item',
@@ -168,10 +189,10 @@ return [
     |
     */
     'fields' => [
-        'id' => 'product ID',
-        'name' => 'product name',
-        'description' => 'product Description',
-        'overview' => 'product Overview',
+        'id' => 'Product ID',
+        'name' => 'Product name',
+        'description' => 'Product Description',
+        'overview' => 'Product Overview',
         'slug' => 'Slug',
         'updated_at' => 'Updated at'
     ],
@@ -189,15 +210,22 @@ return [
     |
     */
     'labels' => [
-        'name' => 'product name',
-        'overview' => 'product overview',
-        'description' => 'product description',
-        'image' => 'product image',
-        'files' => 'product files',
+        'name' => 'Product name',
+        'slug' => 'Product slug',
+        'overview' => 'Product overview',
+        'description' => 'Product description',
+        'image' => 'Product image',
+        'files' => 'Product files',
         'category' => 'Category name',
+        'slideshow' => 'Slideshow name',
         'title-search' => 'Search product',
         'title-backup' => 'Backups',
         'config' => 'Configurations',
+        'keyword' => 'Keyword',
+        'sorting' => 'Sorting',
+        'no-selected' => 'No selected',
+        'status' => 'Status',
+        'delete' => 'Delete',
     ],
 
 
@@ -286,6 +314,5 @@ return [
         'edit-error' => 'Edit item failed',
         'delete-ok' => 'Delete item successfully',
         'delete-error' => 'Delete item failed',
-        'find-not' => 'Find not product ',
     ],
 ];

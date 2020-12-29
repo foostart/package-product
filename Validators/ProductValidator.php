@@ -1,9 +1,9 @@
-<?php namespace Nhoma\Product\Validators;
+<?php namespace Foostart\Product\Validators;
 
 use Foostart\Category\Library\Validators\FooValidator;
 use Event;
 use \LaravelAcl\Library\Validators\AbstractValidator;
-use Nhoma\Product\Models\Product;
+use Foostart\Product\Models\Product;
 
 use Illuminate\Support\MessageBag as MessageBag;
 
@@ -16,10 +16,9 @@ class ProductValidator extends FooValidator
     {
         // add rules
         self::$rules = [
-            'name' => ["required"],
-            'price' => ["required"],
-            'description' => ["required"],
-            'cate_id' => ["required"],
+            'product_name' => ["required"],
+            'product_overview' => ["required"],
+            'product_description' => ["required"],
         ];
 
         // set configs
@@ -36,10 +35,9 @@ class ProductValidator extends FooValidator
         Event::listen('validating', function($input)
         {
             self::$messages = [
-                'name.required'          => trans($this->lang_admin.'.errors.required', ['attribute' => trans($this->lang_admin.'.fields.name')]),
-                'price.required'      => trans($this->lang_admin.'.errors.required', ['attribute' => trans($this->lang_admin.'.fields.price')]),
-                'description.required'   => trans($this->lang_admin.'.errors.required', ['attribute' => trans($this->lang_admin.'.fields.description')]),
-                'cate_id.required'   => trans($this->lang_admin.'.errors.required', ['attribute' => trans($this->lang_admin.'.fields.cate_id')]),
+                'product_name.required'          => trans($this->lang_admin.'.errors.required', ['attribute' => trans($this->lang_admin.'.fields.name')]),
+                'product_overview.required'      => trans($this->lang_admin.'.errors.required', ['attribute' => trans($this->lang_admin.'.fields.overview')]),
+                'product_description.required'   => trans($this->lang_admin.'.errors.required', ['attribute' => trans($this->lang_admin.'.fields.description')]),
             ];
         });
 
@@ -61,35 +59,28 @@ class ProductValidator extends FooValidator
 
         $params = [
             'name' => [
-                'key' => 'name',
+                'key' => 'product_name',
                 'label' => trans($this->lang_admin.'.fields.name'),
-                'min' => $_ln['name']['min'],
-                'max' => $_ln['name']['max'],
+                'min' => $_ln['product_name']['min'],
+                'max' => $_ln['product_name']['max'],
             ],
-            'price' => [
-                'key' => 'price',
-                'label' => trans($this->lang_admin.'.fields.price'),
-                'min' => $_ln['price']['min'],
-                'max' => $_ln['price']['max'],
+            'overview' => [
+                'key' => 'product_overview',
+                'label' => trans($this->lang_admin.'.fields.overview'),
+                'min' => $_ln['product_overview']['min'],
+                'max' => $_ln['product_overview']['max'],
             ],
             'description' => [
-                'key' => 'description',
+                'key' => 'product_description',
                 'label' => trans($this->lang_admin.'.fields.description'),
-                'min' => $_ln['description']['min'],
-                'max' => $_ln['description']['max'],
-            ],
-            'cate_id' => [
-                'key' => 'cate_id',
-                'label' => trans($this->lang_admin.'.fields.cate_id'),
-                'min' => $_ln['cate_id']['min'],
-                'max' => $_ln['cate_id']['max'],
+                'min' => $_ln['product_description']['min'],
+                'max' => $_ln['product_description']['max'],
             ],
         ];
 
-        $flag = $this->isValidLength($input['name'], $params['name']) ? $flag : FALSE;
-        $flag = $this->isValidLength($input['price'], $params['price']) ? $flag : FALSE;
-        $flag = $this->isValidLength($input['description'], $params['description']) ? $flag : FALSE;
-        $flag = $this->isValidLength($input['cate_id'], $params['cate_id']) ? $flag : FALSE;
+        $flag = $this->isValidLength($input['product_name'], $params['name']) ? $flag : FALSE;
+        $flag = $this->isValidLength($input['product_overview'], $params['overview']) ? $flag : FALSE;
+        $flag = $this->isValidLength($input['product_description'], $params['description']) ? $flag : FALSE;
 
         return $flag;
     }

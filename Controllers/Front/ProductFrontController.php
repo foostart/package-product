@@ -1,6 +1,4 @@
-<?php
-
-namespace Foostart\Product\Controlers\User;
+<?php namespace Foostart\Product\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -10,7 +8,7 @@ use URL,
     Redirect;
 use Foostart\Sample\Models\Samples;
 
-class ProductUserController extends Controller
+class ProductFrontController extends Controller
 {
     public $data = array();
     public function __construct() {

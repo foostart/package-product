@@ -1,6 +1,4 @@
-<?php
-
-namespace Nhoma\Product;
+<?php namespace Foostart\Product;
 
 use Illuminate\Support\ServiceProvider;
 use LaravelAcl\Authentication\Classes\Menu\SentryMenuFactory;
@@ -33,7 +31,7 @@ class ProductServiceProvider extends ServiceProvider {
         $this->publishLang();
 
         // publish views
-        $this->publishViews();
+        //$this->publishViews();
 
         // publish assets
         $this->publishAssets();
@@ -51,7 +49,7 @@ class ProductServiceProvider extends ServiceProvider {
 
     /**
      * Public config to system
-     * @source: vendor/nhoma/package-product/config
+     * @source: vendor/foostart/package-product/config
      * @destination: config/
      */
     protected function publishConfig() {
@@ -62,7 +60,7 @@ class ProductServiceProvider extends ServiceProvider {
 
     /**
      * Public language to system
-     * @source: vendor/nhoma/package-product/lang
+     * @source: vendor/foostart/package-product/lang
      * @destination: resources/lang
      */
     protected function publishLang() {
@@ -73,7 +71,7 @@ class ProductServiceProvider extends ServiceProvider {
 
     /**
      * Public view to system
-     * @source: vendor/nhoma/package-product/Views
+     * @source: vendor/foostart/package-product/Views
      * @destination: resources/views/vendor/package-product
      */
     protected function publishViews() {
@@ -85,7 +83,7 @@ class ProductServiceProvider extends ServiceProvider {
 
     protected function publishAssets() {
         $this->publishes([
-            __DIR__ . '/public' => public_path('packages/nhoma/package-product'),
+            __DIR__ . '/public' => public_path('packages/foostart/package-product'),
         ]);
     }
 

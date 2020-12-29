@@ -1,56 +1,60 @@
-<?php namespace Nhoma\Product\Controllers\Admin;
+<?php namespace Foostart\Product\Controllers\Admin;
 
 /*
 |-----------------------------------------------------------------------
 | ProductAdminController
 |-----------------------------------------------------------------------
-| @author: Nhom A
-| @date: 2/5/2019
+| @author: Kang
+| @website: http://foostart.com
+| @date: 28/12/2017
 |
 */
 
 
 use Illuminate\Http\Request;
-use Nhoma\Product\Models\Product;
-use Nhoma\Product\Models\Image;
-use Nhoma\Product\Transformers\ProductTransformer;
-use Nhoma\Product\Models\Product_Category;
 use URL, Route, Redirect;
 use Illuminate\Support\Facades\App;
 
 use Foostart\Category\Library\Controllers\FooController;
+use Foostart\Product\Models\Product;
 use Foostart\Category\Models\Category;
-use Nhoma\Product\Validators\ProductValidator;
+use Foostart\Slideshow\Models\Slideshow;
+use Foostart\Product\Validators\ProductValidator;
 
 
-class ProductController extends FooController {
+class ProductAdminController extends FooController {
 
     public $obj_item = NULL;
     public $obj_category = NULL;
-    protected $obj_pro_cate = NULL;
+    public $context = NULL;
+    public $categories = NULL;
+    public $slideshow = NULL;
 
-    public function __construct() {
+
+    public function __construct(Request $request) {
 
         parent::__construct();
-        // models
+
+        //models
         $this->obj_item = new Product(array('perPage' => 10));
         $this->obj_category = new Category();
-        $this->obj_pro_cate = new Product_Category();
-        // validators
+        $this->obj_slideshow = new Slideshow();
+
+        //validators
         $this->obj_validator = new ProductValidator();
 
-        // set language files
+        //set language files
         $this->plang_admin = 'product-admin';
         $this->plang_front = 'product-front';
 
-        // package name
+        //package name
         $this->package_name = 'package-product';
         $this->package_base_name = 'product';
 
-        // root routers
+        //root routers
         $this->root_router = 'products';
 
-        // page views
+        //page views
         $this->page_views = [
             'admin' => [
                 'items' => $this->package_name.'::admin.'.$this->package_base_name.'-items',
@@ -60,10 +64,30 @@ class ProductController extends FooController {
             ]
         ];
 
+        //get status item
         $this->data_view['status'] = $this->obj_item->getPluckStatus();
 
-        // //set category
+        //set category context
         $this->category_ref_name = 'admin/products';
+
+        //get list of categories
+        $this->context = $this->obj_item->getContext($this->category_ref_name);
+        if ($this->context) {
+            $_params = [
+                'context_id' => $this->context->context_id
+            ];
+            $this->categories = $this->obj_category->pluckSelect($_params);
+        }
+        $this->data_view['categories'] = $this->categories;
+        $this->data_view['context'] = $this->context;
+        $this->data_view['slideshow'] = $this->obj_slideshow->pluckSelect();
+
+
+        /**
+         * Breadcrumb
+         */
+        $this->breadcrumb_1['label'] = 'Admin';
+        $this->breadcrumb_2['label'] = 'Rules';
 
     }
 
@@ -74,57 +98,45 @@ class ProductController extends FooController {
      */
     public function index(Request $request) {
 
+        /**
+         * Breadcrumb
+         */
+        $this->breadcrumb_3 = NULL;
+
+        /**
+         * Params
+         */
         $params = $request->all();
-        $items = $this->obj_item->selectItems($params);
-        $items = $items->toArray();
+        $user = $this->getUser();
 
-        $items = $this->transformProductArray($items);
-        // display view
-        $this->data_view = array_merge($this->data_view, array(
-            'items' => $items,
-            'request' => $request,
-            'params' => $params,
-        ));
-        return response()->json(['status' => 200, 'List Product' => $items], 200);
-//        return view($this->page_views['admin']['items'], $this->data_view);
-    }
+        /**
+         * Get current user and ignore admin
+         */
+        $is_admin = $this->hasPermissions(array('_superadmin'));
 
-    public function search(Request $request) {
+        if ($is_admin ) {
 
-        $params = $request->all();
-        $items = $this->obj_item->selectItems($params);
-        // display view
-        $this->data_view = array_merge($this->data_view, array(
-            'items' => $items,
-            'request' => $request,
-            'params' => $params,
-        ));
-            return response()->json(['status' => 200, 'Product' => $items], 200);
-        
-//        return view($this->page_views['admin']['items'], $this->data_view);
-    }
-    /**
-     * Show items by id
-     */
-    public function showByID(Request $request, $id) {
+        } else if (empty($params['user_id']) || ($params['user_id'] != $user['user_id'])) {
 
-        $params = $request->all();
-        $item = $this->obj_item->find($id);
-        
-        if(!empty($item)){
+            return redirect()->route('products.list', ['user_id' => $user['user_id']]);
 
-            $params['id'] = $id;
-            $items = $this->obj_item->selectItem($params);
-            $items = $items->toArray();
-            // dd($items);
-            $items = $this->transformProduct($items);        
-    
-            return response()->json(['status' => 200, 'Product' => $items], 200);
-        }else{
-            return response()->json(['message' => trans($this->plang_admin.'.actions.find-not'), 'status' => 401], 401);
         }
         
-//        return view($this->page_views['admin']['items'], $this->data_view);
+        $items = $this->obj_item->selectItems($params);
+
+        // display view
+        $this->data_view = array_merge($this->data_view, array(
+            'items' => $items,
+            'request' => $request,
+            'params' => $params,
+            'breadcrumb_1' => $this->breadcrumb_1,
+            'breadcrumb_2' => $this->breadcrumb_2,
+            'breadcrumb_3' => $this->breadcrumb_3,
+            'is_admin' => $is_admin,
+            'user_id' => $user['user_id'],
+        ));
+
+        return view($this->page_views['admin']['items'], $this->data_view);
     }
 
     /**
@@ -134,14 +146,33 @@ class ProductController extends FooController {
      * @date 26/12/2017
      */
     public function edit(Request $request) {
-        $item = NULL;
-        $categories = NULL;
 
+        /**
+         * Breadcrumb
+         */
+        $this->breadcrumb_3['label'] = 'Edit';
+
+        $item = NULL;
+
+        /**
+         * Params
+         */
         $params = $request->all();
         $params['id'] = $request->get('id', NULL);
 
-        $context = $this->obj_item->getContext($this->category_ref_name);
+        /**
+         * Get current user and ignore admin
+         */
+        $is_admin = $this->hasPermissions(array('_superadmin'));
+        $user = $this->getUser();
 
+        if ($is_admin) {
+
+        } else {
+            $params['user_id'] = $user['user_id'];
+        }
+
+        //get item data by id
         if (!empty($params['id'])) {
 
             $item = $this->obj_item->selectItem($params, FALSE);
@@ -152,19 +183,13 @@ class ProductController extends FooController {
             }
         }
 
-        //get categories by context
-        $context = $this->obj_item->getContext($this->category_ref_name);
-        if ($context) {
-            $params['context_id'] = $context->context_id;
-            $categories = $this->obj_category->pluckSelect($params);
-        }
-
         // display view
         $this->data_view = array_merge($this->data_view, array(
             'item' => $item,
-            'categories' => $categories,
             'request' => $request,
-            'context' => $context,
+            'breadcrumb_1' => $this->breadcrumb_1,
+            'breadcrumb_2' => $this->breadcrumb_2,
+            'breadcrumb_3' => $this->breadcrumb_3,
         ));
         return view($this->page_views['admin']['edit'], $this->data_view);
     }
@@ -177,89 +202,60 @@ class ProductController extends FooController {
     public function post(Request $request) {
 
         $item = NULL;
-        //$params = array_merge($request->all(), $this->getUser());
-        $params = array_merge($request->all());
+
+        $params = array_merge($request->all(), $this->getUser());
+
         $is_valid_request = $this->isValidRequest($request);
+
         $id = (int) $request->get('id');
+
         if ($is_valid_request && $this->obj_validator->validate($params)) {// valid data
 
             // update existing item
             if (!empty($id)) {
+
                 $item = $this->obj_item->find($id);
-                
+
                 if (!empty($item)) {
 
-                    $params['id'] = $id;
-                    $obj = $this->obj_pro_cate->getAllCategories();
-                    $flag = 0;
-                    foreach($obj as $ob)
-                    {
-                        if($ob['id'] == intval($request['cate_id']))
-                        {
-                            $flag = 1;
-                        }
-                    }
-                    if($flag == 0)
-                    {
-                        return response()->json(['error' => trans($this->plang_admin.'.actions.find-not') . $request['cate_id'], 'status' => 400], 400);
-                    }
-                    $item = $this->obj_item->updateItem($params);
-        
+                    $item = $this->obj_item->updateItem($params, $id);
+
                     // message
-                    //return Redirect::route($this->root_router.'.edit', ["id" => $item->id])
-                    //                ->withMessage(trans($this->plang_admin.'.actions.edit-ok'));
-                    return response()->json(['success' => trans($this->plang_admin.'.actions.edit-ok'), 'status' => 201], 201);
+                    return Redirect::route($this->root_router.'.edit', ["id" => $item->id])
+                                    ->withMessage(trans($this->plang_admin.'.actions.edit-ok'));
                 } else {
 
                     // message
-                    //return Redirect::route($this->root_router.'.list')
-                    //               ->withMessage(trans($this->plang_admin.'.actions.edit-error'));
-                    return response()->json(['message' => trans($this->plang_admin.'.actions.find-not'), 'status' => 401], 401);
+                    return Redirect::route($this->root_router.'.list')
+                                    ->withMessage(trans($this->plang_admin.'.actions.edit-error'));
                 }
 
             // add new item
             } else {
-                $obj = $this->obj_pro_cate->getAllCategories();
-                $flag = 0;
-                foreach($obj as $ob)
-                {
-                    if($ob['id'] == intval($request['cate_id']))
-                    {
-                        $flag = 1;
-                    }
-                }
-                if($flag == 0)
-                {
-                    return response()->json(['error' => trans($this->plang_admin.'.actions.find-not') . $request['cate_id'], 'status' => 400], 400);
-                }
 
                 $item = $this->obj_item->insertItem($params);
 
                 if (!empty($item)) {
 
                     //message
-                    //return Redirect::route($this->root_router.'.edit', ["id" => $item->id])
-                    //                ->withMessage(trans($this->plang_admin.'.actions.add-ok'));
-                
-                    return response()->json(['success' => trans($this->plang_admin.'.actions.add-ok'), 'status' => 200], 200);
+                    return Redirect::route($this->root_router.'.edit', ["id" => $item->id])
+                                    ->withMessage(trans($this->plang_admin.'.actions.add-ok'));
                 } else {
 
                     //message
-                    //return Redirect::route($this->root_router.'.edit', ["id" => $item->id])
-                    //                ->withMessage(trans($this->plang_admin.'.actions.add-error'));
-                    return response()->json(['message' => trans($this->plang_admin.'.actions.add-error'), 'status' => 400], 400);
+                    return Redirect::route($this->root_router.'.edit', ["id" => $item->id])
+                                    ->withMessage(trans($this->plang_admin.'.actions.add-error'));
                 }
 
             }
 
         } else { // invalid data
 
-            //$errors = $this->obj_validator->getErrors();
+            $errors = $this->obj_validator->getErrors();
 
             // passing the id incase fails editing an already existing item
-            //return Redirect::route($this->root_router.'.edit', $id ? ["id" => $id]: [])
-            //        ->withInput()->withErrors($errors);
-            return response()->json(['error' => $this->obj_validator->getErrors(), 'status' => 400], 400);
+            return Redirect::route($this->root_router.'.edit', $id ? ["id" => $id]: [])
+                    ->withInput()->withErrors($errors);
         }
     }
 
@@ -272,10 +268,8 @@ class ProductController extends FooController {
 
         $item = NULL;
         $flag = TRUE;
-        //$params = array_merge($request->all(), $this->getUser());
-        $params = array_merge($request->all());
-        //$delete_type = isset($params['del-forever'])?'delete-forever':'delete-trash';
-        $delete_type = 'delete-forever';
+        $params = array_merge($request->all(), $this->getUser());
+        $delete_type = isset($params['del-forever'])?'delete-forever':'delete-trash';
         $id = (int)$request->get('id');
         $ids = $request->get('ids');
 
@@ -292,17 +286,15 @@ class ProductController extends FooController {
                 if (!$this->obj_item->deleteItem($params, $delete_type)) {
                     $flag = FALSE;
                 }
-                
             }
             if ($flag) {
-                //return Redirect::route($this->root_router.'.list')
-                //                ->withMessage(trans($this->plang_admin.'.actions.delete-ok'));
-                return response()->json(['success' => trans($this->plang_admin.'.actions.delete-ok'), 'status' => 204], 200);
+                return Redirect::route($this->root_router.'.list')
+                                ->withMessage(trans($this->plang_admin.'.actions.delete-ok'));
             }
         }
-        return response()->json(['message' => trans($this->plang_admin.'.actions.find-not'), 'status' => 404], 404);
-        //return Redirect::route($this->root_router.'.list')
-        //                ->withMessage(trans($this->plang_admin.'.actions.delete-error'));
+
+        return Redirect::route($this->root_router.'.list')
+                        ->withMessage(trans($this->plang_admin.'.actions.delete-error'));
     }
 
     /**
@@ -311,12 +303,23 @@ class ProductController extends FooController {
      * @return view config page
      */
     public function config(Request $request) {
+
+
+        /**
+         * Breadcrumb
+         */
+        $this->breadcrumb_3['label'] = 'Config';
+
         $is_valid_request = $this->isValidRequest($request);
         // display view
         $config_path = realpath(base_path('config/package-product.php'));
-        $package_path = realpath(base_path('vendor/nhoma/package-product'));
+        $package_path = realpath(base_path('vendor/foostart/package-product'));
 
-        $config_bakup = realpath($package_path.'/storage/backup/config');
+        $config_bakup = $package_path.'/storage/backup/config';
+        if (!file_exists($config_bakup)) {
+            mkdir($config_bakup, 0755    , true);
+        }
+        $config_bakup = realpath($config_bakup);
 
         if ($version = $request->get('v')) {
             //load backup config
@@ -343,10 +346,14 @@ class ProductController extends FooController {
             'request' => $request,
             'content' => $content,
             'backups' => $backups,
+            'breadcrumb_1' => $this->breadcrumb_1,
+            'breadcrumb_2' => $this->breadcrumb_2,
+            'breadcrumb_3' => $this->breadcrumb_3,
         ));
 
         return view($this->page_views['admin']['config'], $this->data_view);
     }
+
 
     /**
      * Manage languages of package
@@ -354,18 +361,31 @@ class ProductController extends FooController {
      * @return view lang page
      */
     public function lang(Request $request) {
+
+
+        /**
+         * Breadcrumb
+         */
+        $this->breadcrumb_3['label'] = 'Lang';
+
         $is_valid_request = $this->isValidRequest($request);
         // display view
         $langs = config('package-product.langs');
         $lang_paths = [];
+        $package_path = realpath(base_path('vendor/foostart/package-product'));
 
         if (!empty($langs) && is_array($langs)) {
             foreach ($langs as $key => $value) {
                 $lang_paths[$key] = realpath(base_path('resources/lang/'.$key.'/product-admin.php'));
+
+                $key_backup = $package_path.'/storage/backup/lang/'.$key;
+
+                if (!file_exists($key_backup)) {
+                    mkdir($key_backup, 0755    , true);
+                }
             }
         }
 
-        $package_path = realpath(base_path('vendor/nhoma/package-product'));
 
         $lang_bakup = realpath($package_path.'/storage/backup/lang');
         $lang = $request->get('lang')?$request->get('lang'):'en';
@@ -419,6 +439,9 @@ class ProductController extends FooController {
             'langs'   => $langs,
             'lang_contents' => $lang_contents,
             'lang' => $lang,
+            'breadcrumb_1' => $this->breadcrumb_1,
+            'breadcrumb_2' => $this->breadcrumb_2,
+            'breadcrumb_3' => $this->breadcrumb_3,
         ));
 
         return view($this->page_views['admin']['lang'], $this->data_view);
@@ -431,6 +454,11 @@ class ProductController extends FooController {
      * @date 26/12/2017
      */
     public function copy(Request $request) {
+
+        /**
+         * Breadcrumb
+         */
+        $this->breadcrumb_3['label'] = 'Copy';
 
         $params = $request->all();
 
@@ -451,69 +479,19 @@ class ProductController extends FooController {
             $item->id = NULL;
         }
 
-        $categories = $this->obj_category->pluckSelect($params);
 
         // display view
         $this->data_view = array_merge($this->data_view, array(
             'item' => $item,
-            'categories' => $categories,
             'request' => $request,
             'context' => $context,
+            'breadcrumb_1' => $this->breadcrumb_1,
+            'breadcrumb_2' => $this->breadcrumb_2,
+            'breadcrumb_3' => $this->breadcrumb_3,
         ));
 
         return view($this->page_views['admin']['edit'], $this->data_view);
     }
 
-    public function transformProduct($product){
-        
-                $new_product = [];
-                $images = Image::where('product_id', $product['id'])->get();
-              
-                if(!empty($images->name)){
-                
-                    foreach ($images as $image) {
-                        $product['image'][] = asset("uploads/" . $image->name);
-                    }
-                }else{
-                    $product['image'] = [];
-                }
-                
-                $new_product = [
-                    'id'=>$product['id'],
-                    'name'=>$product['name'],
-                    'description'=>$product['description'],
-                    'cate_name'=>$product['cate_name'],
-                    'image'=>$product['image'],
-                ];
-        return $new_product;
-    }
-    public function transformProductArray($products)
-    {
-        $new_products = [];
-       
-        if ($products) {
-            # code...
-            foreach ($products['data'] as $product) {
-                $product['image'] = [];
-                $images = Image::where('product_id', $product['id'])->get();
-            
-                foreach ($images as $image) {     
-                    // $product['image'] = asset("uploads/" . $image->name);
-                    array_push($product['image'], asset("uploads/" . $image->name));
-                }
-
-                $new_product = [
-                    'id'=>$product['id'],
-                    'name'=>$product['name'],
-                    'description'=>$product['description'],
-                    'cate_name'=>$product['cate_name'],
-                    'image'=>$product['image'],
-                ];
-                $new_products[] = $new_product;
-            }
-        }
-       
-        return $new_products;
-    }
 
 }

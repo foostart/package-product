@@ -1,7 +1,8 @@
-<?php namespace Nhoma\Product\Models;
+<?php namespace Foostart\Product\Models;
 
 use Foostart\Category\Library\Models\FooModel;
 use Illuminate\Database\Eloquent\Model;
+use Foostart\Comment\Models\Comment;
 
 class Product extends FooModel {
 
@@ -9,6 +10,7 @@ class Product extends FooModel {
      * @table categories
      * @param array $attributes
      */
+    public $user = NULL;
     public function __construct(array $attributes = array()) {
         //set configurations
         $this->setConfigs();
@@ -24,44 +26,91 @@ class Product extends FooModel {
 
         //list of field in table
         $this->fillable = [
-            'name',
-            'description',
-            'price',
-            'cate_id',
+            'product_name',
+            'product_slug',
+            'category_id',
+            'slideshow_id',
+            'user_id',
+            'user_full_name',
+            'user_email',
+            'product_overview',
+            'product_description',
+            'product_image',
+            'product_files',
+            'product_status',
         ];
 
         //list of fields for inserting
         $this->fields = [
-            'name' => [
-                'name' => 'name',
+            'product_name' => [
+                'name' => 'product_name',
                 'type' => 'Text',
             ],
-            'description' => [
-                'name' => 'description',
+            'product_slug' => [
+                'name' => 'product_slug',
                 'type' => 'Text',
             ],
-            'price' => [
-                'name' => 'price',
+            'category_id' => [
+                'name' => 'category_id',
+                'type' => 'Int',
+            ],
+            'slideshow_id' => [
+                'name' => 'slideshow_id',
+                'type' => 'Int',
+            ],
+            'user_id' => [
+                'name' => 'user_id',
+                'type' => 'Int',
+            ],
+            'user_full_name' => [
+                'name' => 'user_full_name',
                 'type' => 'Text',
             ],
-        
-            'cate_id' => [
-                'name' => 'cate_id',
+            'user_email' => [
+                'name' => 'email',
                 'type' => 'Text',
+            ],
+            'product_overview' => [
+                'name' => 'product_overview',
+                'type' => 'Text',
+            ],
+            'product_description' => [
+                'name' => 'product_description',
+                'type' => 'Text',
+            ],
+            'product_image' => [
+                'name' => 'product_image',
+                'type' => 'Text',
+            ],
+            'product_files' => [
+                'name' => 'files',
+                'type' => 'Json',
+            ],
+            'product_status' => [
+                'name' => 'status',
+                'type' => 'Int',
             ],
         ];
 
         //check valid fields for inserting
         $this->valid_insert_fields = [
-            'name',
-            'description',
-            'price',
-            'cate_id',
+            'product_name',
+            'product_slug',
+            'user_id',
+            'category_id',
+            'slideshow_id',
+            'user_full_name',
+            'updated_at',
+            'product_overview',
+            'product_description',
+            'product_image',
+            'product_files',
+            'product_status',
         ];
 
         //check valid fields for ordering
         $this->valid_ordering_fields = [
-            'name',
+            'product_name',
             'updated_at',
             $this->field_status,
         ];
@@ -69,16 +118,22 @@ class Product extends FooModel {
         $this->valid_filter_fields = [
             'keyword',
             'status',
+            'category',
+            '_id',
+            'limit',
+            'product_id!',
+            'category_id',
+            'user_id',
         ];
 
         //primary key
-        $this->primaryKey = 'id';
+        $this->primaryKey = 'product_id';
 
         //the number of items on page
         $this->perPage = 10;
 
         //item status
-        $this->field_status = 'status';
+        $this->field_status = 'product_status';
 
     }
 
@@ -87,14 +142,14 @@ class Product extends FooModel {
      * @param type $params
      * @return object list of categories
      */
-    public function selectItems($params = array(), $key = NULL, $value = NULL) {
+    public function selectItems($params = array()) {
 
         //join to another tables
-        $elo = $this->joinTable($params);
+        $elo = $this->joinTable();
 
         //search filters
         $elo = $this->searchFilters($params, $elo);
-      
+
         //select fields
         $elo = $this->createSelect($elo);
 
@@ -102,7 +157,11 @@ class Product extends FooModel {
         $elo = $this->orderingFilters($params, $elo);
 
         //paginate items
-        $items = $this->paginateItems($params, $elo);
+        if ($this->is_pagination) {
+            $items = $this->paginateItems($params, $elo);
+        } else {
+            $items = $elo->get();
+        }
 
         return $items;
     }
@@ -114,26 +173,53 @@ class Product extends FooModel {
      */
     public function selectItem($params = array(), $key = NULL) {
 
+
         if (empty($key)) {
             $key = $this->primaryKey;
         }
-
        //join to another tables
-        $elo = $this->joinTable($params);
+        $elo = $this->joinTable();
 
         //search filters
-        //$elo = $this->searchFilters($params, $elo, FALSE);
-        
+        $elo = $this->searchFilters($params, $elo, FALSE);
+
         //select fields
         $elo = $this->createSelect($elo);
 
         //id
-        $elo = $elo->where($this->table.'.'.$this->primaryKey, $params['id']);
-             
+        $elo = $elo->where($this->primaryKey, $params['id']);
+
         //first item
         $item = $elo->first();
 
         return $item;
+    }
+
+
+    public function getComments($product_id) {
+
+        // Get product
+        $params = array(
+            'id' => $product_id,
+        );
+        $product = $this->selectItem($params);
+
+        // Get comment by context
+        $params = array(
+            'context_name' => 'product',
+            'context_id' => $product_id,
+            'by_status' => true,
+        );
+        $obj_comment = new Comment();
+        $obj_comment->user = $this->user;
+        $comments = $obj_comment->selectItems($params);
+
+        $users_comments = $obj_comment->mapCommentArray($comments);
+        $product->cache_comments = json_encode($users_comments);
+        $product->cache_time = time();
+        $product->save();
+
+        return $users_comments;
     }
 
     /**
@@ -142,12 +228,7 @@ class Product extends FooModel {
      * @return ELOQUENT OBJECT
      */
     protected function joinTable(array $params = []){
-        $elo = $this;       
-        
-        $elo = $elo->join('product_categories', 'products.cate_id', '=', 'product_categories.id');
-
-        return $elo;
-        //return $this;
+        return $this;
     }
 
     /**
@@ -158,8 +239,7 @@ class Product extends FooModel {
     protected function searchFilters(array $params = [], $elo, $by_status = TRUE){
 
         //filter
-        // dd($this->isValidFilters($params) || (!empty($params)));
-        if (!empty($params))
+        if ($this->isValidFilters($params) && (!empty($params)))
         {
             foreach($params as $column => $value)
             {
@@ -167,25 +247,43 @@ class Product extends FooModel {
                 {
                     switch($column)
                     {
-                        case 'name':
-                        
+                        case 'category_id':
                             if (!empty($value)) {
-                                $elo = $elo->where($this->table . '.name', '=', $value);
-                        
+                                $elo = $elo->where($this->table . '.category_id', '=', $value);
+                            }
+                            break;
+                        case 'category':
+                            if (!empty($value)) {
+                                $elo = $elo->where($this->table . '.category_id', '=', $value);
+                            }
+                            break;
+                        case 'user_id':
+                            if (!empty($value)) {
+                                $elo = $elo->where($this->table . '.user_id', '=', $value);
+                            }
+                            break;
+                        case 'limit':
+                            if (!empty($value)) {
+                                $this->perPage = $value;
+                                $elo = $elo->limit($value);
+                            }
+                            break;
+                        case '_id':
+                            if (!empty($value)) {
+                                $elo = $elo->where($this->table . '.product_id', '!=', $value);
                             }
                             break;
                         case 'status':
                             if (!empty($value)) {
                                 $elo = $elo->where($this->table . '.'.$this->field_status, '=', $value);
-                                
                             }
                             break;
                         case 'keyword':
                             if (!empty($value)) {
                                 $elo = $elo->where(function($elo) use ($value) {
-                                    $elo->where($this->table . '.name', 'LIKE', "%{$value}%")
-                                    ->orWhere($this->table . '.description','LIKE', "%{$value}%")
-                                    ->orWhere($this->table . '.price','LIKE', "%{$value}%");
+                                    $elo->where($this->table . '.product_name', 'LIKE', "%{$value}%")
+                                    ->orWhere($this->table . '.product_description','LIKE', "%{$value}%")
+                                    ->orWhere($this->table . '.product_overview','LIKE', "%{$value}%");
                                 });
                             }
                             break;
@@ -195,11 +293,8 @@ class Product extends FooModel {
                 }
             }
         } elseif ($by_status) {
-            // $elo = $elo->where($this->table . '.'.$this->field_status, '=', $this->status['publish']);
-            
-            // $products = $elo->get()->toArray();
-            // return $products;
-            //dd($elo);
+
+            $elo = $elo->where($this->table . '.'.$this->field_status, '=', $this->status['publish']);
 
         }
 
@@ -214,8 +309,7 @@ class Product extends FooModel {
     public function createSelect($elo) {
 
         $elo = $elo->select($this->table . '.*',
-                    $this->table . '.id as id',
-                    'product_categories.name as cate_name'
+                            $this->table . '.product_id as id'
                 );
 
         return $elo;
@@ -243,20 +337,20 @@ class Product extends FooModel {
         if (empty($id)) {
             $id = $params['id'];
         }
-
         $field_status = $this->field_status;
 
-        $product = $this->selectItem($params);
-        
-        if (!empty($product)) {
+        //get product item by conditions
+        $_params = [
+            'id' => $id,
+        ];
+        $product = $this->selectItem($_params);
 
+        if (!empty($product)) {
             $dataFields = $this->getDataFields($params, $this->fields);
-         
+
             foreach ($dataFields as $key => $value) {
                 $product->$key = $value;
             }
-
-            $product->$field_status = $this->status['publish'];
 
             $product->save();
 
@@ -265,6 +359,7 @@ class Product extends FooModel {
             return NULL;
         }
     }
+
 
     /**
      *
@@ -277,6 +372,7 @@ class Product extends FooModel {
 
         $dataFields[$this->field_status] = $this->status['publish'];
 
+
         $item = self::create($dataFields);
 
         $key = $this->primaryKey;
@@ -284,6 +380,7 @@ class Product extends FooModel {
 
         return $item;
     }
+
 
     /**
      *
@@ -309,4 +406,62 @@ class Product extends FooModel {
         return FALSE;
     }
 
-}
+    public function getCoursesByCategoriesRoot($categories) {
+
+        $this->is_pagination = false;
+
+        if (!empty($categories)) {
+
+            //get courses of category root
+            $_params = [
+                'limit' => 9,
+                'category' => $categories->category_id,
+                'is_pagination' => false
+            ];
+            $categories->courses = $this->selectItems($_params);
+
+            //get courses of category childs
+            foreach ($categories->childs as $key => $category) {
+                $ids = [$category->category_id => 1];
+                if (!empty($category->category_id_child_str)) {
+                    $ids += (array)json_decode($category->category_id_child_str);;
+                }
+                $ids = array_keys($ids);
+
+                //error
+                $_temp = $categories->childs[$key];
+                $_temp->courses = $this->getCouresByCategoryIds($ids);
+            }
+
+
+        }
+        return $categories;
+    }
+
+    public function getCouresByCategoryIds($ids) {
+        $courses = self::whereIn('category_id', $ids)
+                    ->paginate($this->perPage);
+        return $courses;
+    }
+
+
+    public function getItemsByCategories($categories) {
+
+        $items = [];
+        $ids = [];
+
+        foreach ($categories as $category ) {
+            $ids += [$category->category_id => 1];
+
+            if (!empty($category->category_id_child_str)) {
+                $ids += (array) json_decode($category->category_id_child_str);
+            }
+        }
+
+        //Get list of items by ids
+        $items = $this->getCouresByCategoryIds(array_keys($ids));
+
+        return $items;
+    }
+
+    }

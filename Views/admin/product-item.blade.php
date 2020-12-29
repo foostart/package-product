@@ -1,11 +1,11 @@
 @if(!empty($items) && (!$items->isEmpty()) )
 <?php
     $withs = [
-        'order' => '5%',
+        'order' => '10%',
         'name' => '40%',
-        'updated_at' => '40%',
-        'operations' => '10%',
-        'delete' => '5%',
+        'status' => '10%',
+        'updated_at' => '25%',
+        'operations' => '15%',
     ];
 
     global $counter;
@@ -28,6 +28,10 @@
             <!--ORDER-->
             <th style='width:{{ $withs['order'] }}'>
                 {{ trans($plang_admin.'.columns.order') }}
+                <span class="del-checkbox pull-right">
+                    <input type="checkbox" id="selecctall" />
+                    <label for="del-checkbox"></label>
+                </span>
             </th>
 
             <!-- NAME -->
@@ -44,11 +48,27 @@
                     @endif
                 </a>
             </th>
+            
+            <!--STATUS-->
+            <?php $name = 'product_status' ?>
 
-            <!-- NAME -->
+            <th class="hidden-xs" style='width:{{ $withs['status'] }}'>{!! trans($plang_admin.'.columns.product-status') !!}
+                <a href='{!! $sorting["url"][$name] !!}' class='tb-id' data-order='asc'>
+                    @if($sorting['items'][$name] == 'asc')
+                        <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i>
+                    @elseif($sorting['items'][$name] == 'desc')
+                        <i class="fa fa-sort-alpha-desc" aria-hidden="true"></i>
+                    @else
+                        <i class="fa fa-sort-desc" aria-hidden="true"></i>
+                    @endif
+                </a>
+            </th>
+
+            <!-- UPDATE -->
             <?php $name = 'updated_at' ?>
 
-            <th class="hidden-xs" style='width:{{ $withs['updated_at'] }}'>{!! trans($plang_admin.'.columns.updated_at') !!}
+            <th class="hidden-xs" style='width:{{ $withs['updated_at'] }}'>
+                {!! trans($plang_admin.'.columns.updated_at') !!}
                 <a href='{!! $sorting["url"][$name] !!}' class='tb-id' data-order='asc'>
                     @if($sorting['items'][$name] == 'asc')
                         <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i>
@@ -66,16 +86,17 @@
                     {{ trans($plang_admin.'.columns.operations') }}
                 </span>
 
-                {!! Form::submit(trans($plang_admin.'.buttons.delete'), array("class"=>"btn btn-danger pull-right delete btn-delete-all del-trash", 'name'=>'del-trash')) !!}
-                {!! Form::submit(trans($plang_admin.'.buttons.delete'), array("class"=>"btn btn-warning pull-right delete btn-delete-all del-forever", 'name'=>'del-forever')) !!}
+                {!! Form::submit(trans($plang_admin.'.buttons.delete-in-trash'), array(
+                                                                            "class"=>"btn btn-danger pull-right delete btn-delete-all del-trash",
+                                                                            "title"=> trans($plang_admin.'.hint.delete-in-trash'),
+                                                                            'name'=>'del-trash'))
+                !!}
+                {!! Form::submit(trans($plang_admin.'.buttons.delete-forever'), array(
+                                                                            "class"=>"btn btn-warning pull-right delete btn-delete-all del-forever",
+                                                                            "title"=> trans($plang_admin.'.hint.delete-forever'),
+                                                                            'name'=>'del-forever'))
+                !!}
             </th>
-
-            <!--DELETE-->
-            <th style='width:{{ $withs['delete'] }}'>
-                <span class="del-checkbox pull-right">
-                    <input type="checkbox" id="selecctall" />
-                    <label for="del-checkbox"></label>
-                </span>
             </th>
 
         </tr>
@@ -86,23 +107,52 @@
         @foreach($items as $item)
             <tr>
                 <!--COUNTER-->
-                <td> <?php echo $counter; $counter++ ?> </td>
+                <td>
+                    <?php echo $counter; $counter++ ?>
+                    <span class='box-item pull-right'>
+                        <input type="checkbox" id="<?php echo $item->id ?>" name="ids[]" value="{!! $item->id !!}">
+                        <label for="box-item"></label>
+                    </span>
+                </td>
 
                 <!--NAME-->
                 <td> {!! $item->product_name !!} </td>
+                
+                <!--STATUS-->
+                <td style="text-align: center;">
+
+                    <?php $status = config('package-category.status'); ?>
+                    @if($item->product_status && (isset($status['list'][$item->product_status])))
+                        <i class="fa fa-circle" style="color:{!! $status['color'][$item->product_status] !!}" title='{!! $status["list"][$item->product_status] !!}'></i>
+                    @else
+                    <i class="fa fa-circle-o red" title='{!! trans($plang_admin.".labels.unknown") !!}'></i>
+                    @endif
+                </td>
 
                 <!--UPDATED AT-->
-                <td> {!! $item->updated_at !!} </td>
+                <td> {!! date('d-m-Y H:i',strtotime($item->updated_at)) !!} </td>
 
                 <!--OPERATOR-->
                 <td>
+                    <!--comment-->
+                    @if(Route::has('comments.by_context'))
+                    <a href="{!! URL::route('comments.by_context', [   'id' => $item->id,
+                                                                       'context' => 'product',
+                                                                       '_token' => csrf_token()
+                                                            ])
+                            !!}">
+                        <i class="fa fa-commenting" aria-hidden="true"></i>
+                    </a>&nbsp;
+                    @endif
+
                     <!--edit-->
                     <a href="{!! URL::route('products.edit', [   'id' => $item->id,
                                                                 '_token' => csrf_token()
                                                             ])
                             !!}">
                         <i class="fa fa-edit f-tb-icon"></i>
-                    </a>
+                    </a>&nbsp;
+
 
                     <!--copy-->
                     <a href="{!! URL::route('products.copy',[    'cid' => $item->id,
@@ -111,25 +161,8 @@
                              !!}"
                         class="margin-left-5">
                         <i class="fa fa-files-o f-tb-icon" aria-hidden="true"></i>
-                    </a>
+                    </a>&nbsp;
 
-                    <!--delete-->
-                    <a href="{!! URL::route('products.delete',[  'id' => $item->id,
-                                                                '_token' => csrf_token(),
-                                                              ])
-                             !!}"
-                       class="margin-left-5 delete">
-                        <i class="fa fa-trash-o f-tb-icon"></i>
-                    </a>
-
-                </td>
-
-                <!--DELETE-->
-                <td>
-                    <span class='box-item pull-right'>
-                        <input type="checkbox" id="<?php echo $item->id ?>" name="ids[]" value="{!! $item->id !!}">
-                        <label for="box-item"></label>
-                    </span>
                 </td>
 
             </tr>
@@ -153,5 +186,5 @@
 
 @section('footer_scripts')
     @parent
-    {!! HTML::script('packages/foostart/package-product/js/form-table.js')  !!}
+    {!! HTML::script('packages/foostart/js/form-table.js')  !!}
 @stop

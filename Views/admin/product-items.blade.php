@@ -10,7 +10,7 @@
         <div class="col-md-12">
 
             <!--LIST OF ITEMS-->
-            <div class="col-md-8">
+            <div class="col-md-9">
 
                 <div class="panel panel-info">
 
@@ -23,7 +23,10 @@
 
                     <!--DESCRIPTION-->
                     <div class='panel-info panel-description'>
-                        {!! trans($plang_admin.'.descriptions.list') !!}</h4>
+                        {!! trans($plang_admin.'.descriptions.list') !!} <br>
+                        @if($is_admin)
+                        <p>You are admin, <a href="{!! Url::route('products.list',['user_id' => $user_id]) !!}">click here</a> to view your created rules
+                        @endif
                     </div>
                     <!--/DESCRIPTION-->
 
@@ -61,7 +64,7 @@
             <!--/LIST OF ITEMS-->
 
             <!--SEARCH-->
-            <div class="col-md-4">
+            <div class="col-md-3">
                 @include('package-product::admin.product-search')
             </div>
             <!--/SEARCH-->
