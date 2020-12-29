@@ -29,27 +29,27 @@ SET time_zone = "+00:00";
 --
 
 DROP TABLE IF EXISTS `products`;
-CREATE TABLE IF NOT EXISTS `products` (
+CREATE TABLE IF NOT EXISTS `posts` (
   `product_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
   `user_email` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `user_full_name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `category_id` int(11) DEFAULT NULL,
-  `slideshow_id` int(11) DEFAULT NULL,
   `product_name` varchar(500) CHARACTER SET utf8 DEFAULT NULL,
-  `product_slug` varchar(500) COLLATE utf8_unicode_ci DEFAULT NULL,
   `product_overview` varchar(1000) COLLATE utf8_unicode_ci DEFAULT NULL,
   `product_description` longtext COLLATE utf8_unicode_ci,
   `product_image` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `product_files` varchar(10000) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `product_status` tinyint(4) DEFAULT NULL,
+  `product_images` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `product_price_root` float(11) NOT NULL
+  `product_price` float(11) NOT NULL
+  `product_price_sale` float(11) NOT NULL
+  `category_id` int(11) DEFAULT NULL,
   `cache_comments` text COLLATE utf8_unicode_ci,
   `cache_other_products` text COLLATE utf8_unicode_ci,
-  `cache_time` int(11) DEFAULT NULL,
+  `product_status` tinyint(4) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`product_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
