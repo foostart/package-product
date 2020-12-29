@@ -89,7 +89,7 @@ Route::group(['middleware' => ['web']], function () {
             'uses' => 'ProductAdminController@config'
         ]);
 
-        Route::product('admin/products/config', [
+        Route::post('admin/products/config', [
             'as' => 'products.config',
             'uses' => 'ProductAdminController@config'
         ]);
@@ -102,7 +102,7 @@ Route::group(['middleware' => ['web']], function () {
             'uses' => 'ProductAdminController@lang'
         ]);
 
-        Route::product('admin/products/lang', [
+        Route::post('admin/products/lang', [
             'as' => 'products.lang',
             'uses' => 'ProductAdminController@lang'
         ]);
