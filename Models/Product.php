@@ -26,18 +26,20 @@ class Product extends FooModel {
 
         //list of field in table
         $this->fillable = [
-            'product_name',
-            'product_slug',
-            'category_id',
-            'slideshow_id',
             'user_id',
-            'user_full_name',
             'user_email',
+            'user_full_name',
+            'product_name',
             'product_overview',
             'product_description',
             'product_image',
-            'product_files',
+            'product_images',
+            'product_price_root',
+            'product_price',
+            'product_price_sale',
             'product_status',
+            'category_id',
+            'product_slug',
         ];
 
         //list of fields for inserting
@@ -52,10 +54,6 @@ class Product extends FooModel {
             ],
             'category_id' => [
                 'name' => 'category_id',
-                'type' => 'Int',
-            ],
-            'slideshow_id' => [
-                'name' => 'slideshow_id',
                 'type' => 'Int',
             ],
             'user_id' => [
@@ -82,9 +80,21 @@ class Product extends FooModel {
                 'name' => 'product_image',
                 'type' => 'Text',
             ],
-            'product_files' => [
-                'name' => 'files',
-                'type' => 'Json',
+            'product_images' => [
+                'name' => 'product_images',
+                'type' => 'Text',
+            ],
+            'product_price_root' => [
+                'name' => 'price_root',
+                'type' => 'Int',
+            ],
+            'product_price' => [
+                'name' => 'price',
+                'type' => 'Int',
+            ],
+            'product_price_sale' => [
+                'name' => 'price_sale',
+                'type' => 'Int',
             ],
             'product_status' => [
                 'name' => 'status',
@@ -94,18 +104,20 @@ class Product extends FooModel {
 
         //check valid fields for inserting
         $this->valid_insert_fields = [
-            'product_name',
-            'product_slug',
             'user_id',
-            'category_id',
-            'slideshow_id',
+            'user_email',
             'user_full_name',
-            'updated_at',
+            'product_name',
             'product_overview',
             'product_description',
             'product_image',
-            'product_files',
+            'product_images',
+            'product_price_root',
+            'product_price',
+            'product_price_sale',
             'product_status',
+            'category_id',
+            'product_slug',
         ];
 
         //check valid fields for ordering
