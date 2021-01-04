@@ -27,8 +27,6 @@ class Product extends FooModel {
         //list of field in table
         $this->fillable = [
             'user_id',
-            'user_email',
-            'user_full_name',
             'product_name',
             'product_overview',
             'product_description',
@@ -39,7 +37,6 @@ class Product extends FooModel {
             'product_price_sale',
             'product_status',
             'category_id',
-            'product_slug',
         ];
 
         //list of fields for inserting
@@ -48,10 +45,7 @@ class Product extends FooModel {
                 'name' => 'product_name',
                 'type' => 'Text',
             ],
-            'product_slug' => [
-                'name' => 'product_slug',
-                'type' => 'Text',
-            ],
+      
             'category_id' => [
                 'name' => 'category_id',
                 'type' => 'Int',
@@ -60,14 +54,8 @@ class Product extends FooModel {
                 'name' => 'user_id',
                 'type' => 'Int',
             ],
-            'user_full_name' => [
-                'name' => 'user_full_name',
-                'type' => 'Text',
-            ],
-            'user_email' => [
-                'name' => 'email',
-                'type' => 'Text',
-            ],
+   
+    
             'product_overview' => [
                 'name' => 'product_overview',
                 'type' => 'Text',
@@ -85,15 +73,15 @@ class Product extends FooModel {
                 'type' => 'Text',
             ],
             'product_price_root' => [
-                'name' => 'price_root',
+                'name' => 'product_price_root',
                 'type' => 'Int',
             ],
             'product_price' => [
-                'name' => 'price',
+                'name' => 'product_price',
                 'type' => 'Int',
             ],
             'product_price_sale' => [
-                'name' => 'price_sale',
+                'name' => 'product_price_sale',
                 'type' => 'Int',
             ],
             'product_status' => [
@@ -104,9 +92,8 @@ class Product extends FooModel {
 
         //check valid fields for inserting
         $this->valid_insert_fields = [
+
             'user_id',
-            'user_email',
-            'user_full_name',
             'product_name',
             'product_overview',
             'product_description',
@@ -117,7 +104,6 @@ class Product extends FooModel {
             'product_price_sale',
             'product_status',
             'category_id',
-            'product_slug',
         ];
 
         //check valid fields for ordering
@@ -381,15 +367,12 @@ class Product extends FooModel {
     public function insertItem($params = []) {
 
         $dataFields = $this->getDataFields($params, $this->fields);
-
+        $dataFields['product_images'] = $dataFields['product_image'];
+        $dataFields['product_price_sale'] =100 - round(($dataFields['product_price'] / $dataFields['product_price_root']) * 100 );
         $dataFields[$this->field_status] = $this->status['publish'];
-
-
         $item = self::create($dataFields);
-
         $key = $this->primaryKey;
         $item->id = $item->$key;
-
         return $item;
     }
 

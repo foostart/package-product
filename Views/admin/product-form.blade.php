@@ -63,17 +63,40 @@
             ])
             <!--/POST NAME-->
 
-            <!--POST SLUG-->
-            @include('package-category::admin.partials.input_slug', [
-                'name' => 'product_slug',
-                'id' => 'product_slug',
-                'ref' => 'product_name',
-                'label' => trans($plang_admin.'.labels.slug'),
-                'value' => @$item->product_slug,
-                'description' => trans($plang_admin.'.descriptions.slug'),
-                'errors' => $errors,
-            ])
-            <!--/POST NAME-->
+            <!--- POST PRICE--->
+            <div class="row">
+
+                <div class='col-md-6'>
+ 
+                     <!-- LIST OF CATEGORIES -->
+                     @include('package-category::admin.partials.input_text', [
+                        'name' => 'product_price',
+                        'id' => 'product_price',
+                        'label' => trans($plang_admin.'.labels.product-price'),
+                        'value' => @$item->product_price,
+                        'description' => trans($plang_admin.'.descriptions.name'),
+                        'errors' => $errors,
+                    ])
+ 
+                </div>
+ 
+                 <div class='col-md-6'>
+ 
+                     <!-- LIST OF CATEGORIES -->
+                     @include('package-category::admin.partials.input_text', [
+                         'name' => 'product_price_root',
+                         'id' => 'product_price_root',
+                         'label' => trans($plang_admin.'.labels.product-price-root'),
+                         'value' => @$item->product_price_root,
+                         'description' => trans($plang_admin.'.descriptions.name'),
+                         'errors' => $errors,
+                     ])
+ 
+                </div>
+
+ 
+             </div>
+
 
             <div class="row">
 
@@ -93,7 +116,7 @@
 
                </div>
 
-                <div class='col-md-6'>
+                {{-- <div class='col-md-6'>
 
                     <!-- LIST OF CATEGORIES -->
                     @include('package-category::admin.partials.select_single', [
@@ -107,7 +130,7 @@
                         'errors' => $errors,
                     ])
 
-               </div>
+               </div> --}}
 
                 <div class='col-md-6'>
                     <!--STATUS-->

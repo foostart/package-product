@@ -3,12 +3,13 @@
 namespace Foostart\Product\Controlers\User;
 
 use App\Http\Controllers\Controller;
+use Foostart\Product\Models\Product;
 use Illuminate\Http\Request;
 
 use URL,
     Route,
     Redirect;
-use Foostart\Sample\Models\Samples;
+//use Foostart\Sample\Models\Samples;
 
 class ProductUserController extends Controller
 {
@@ -17,16 +18,10 @@ class ProductUserController extends Controller
 
     }
 
-    public function index(Request $request)
-    {
-
-        $obj_sample = new Samples();
-        $samples = $obj_sample->get_samples();
-        $this->data = array(
-            'request' => $request,
-            'samples' => $samples
-        );
-        return view('sample::sample.index', $this->data);
+    public function index(){
+        // Get List of post
+        $products = Product::get();
+        return view('products.index', compact('products'));
     }
 
 }

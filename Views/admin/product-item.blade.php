@@ -163,6 +163,15 @@
                         <i class="fa fa-files-o f-tb-icon" aria-hidden="true"></i>
                     </a>&nbsp;
 
+                    <!--delete-->
+                    <a href="{!! URL::route('products.delete',[  'id' => $item->id,
+                            '_token' => csrf_token(),
+                        ])
+                        !!}"
+                        class="margin-left-5 delete">
+                        <i class="fa fa-trash-o f-tb-icon"></i>
+                    </a>
+
                 </td>
 
             </tr>

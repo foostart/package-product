@@ -194,7 +194,10 @@ return [
         'description' => 'Product Description',
         'overview' => 'Product Overview',
         'slug' => 'Slug',
-        'updated_at' => 'Updated at'
+        'updated_at' => 'Updated at',
+        'product_price' => 'Product Price',
+        'product_price_root' => 'Product Price Root',
+        'product_price_sale' => 'Product Price Sale'
     ],
 
 
@@ -226,6 +229,9 @@ return [
         'no-selected' => 'No selected',
         'status' => 'Status',
         'delete' => 'Delete',
+        'product-price' => 'Product Price',
+        'product-price-root' => 'Product Price Root',
+        'product-price-sale' => 'Product Price Sale'
     ],
 
 

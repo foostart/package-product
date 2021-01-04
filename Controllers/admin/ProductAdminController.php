@@ -69,7 +69,7 @@ class ProductAdminController extends FooController {
 
         //set category context
         $this->category_ref_name = 'admin/products';
-
+        
         //get list of categories
         $this->context = $this->obj_item->getContext($this->category_ref_name);
         if ($this->context) {
@@ -78,6 +78,7 @@ class ProductAdminController extends FooController {
             ];
             $this->categories = $this->obj_category->pluckSelect($_params);
         }
+        
         $this->data_view['categories'] = $this->categories;
         $this->data_view['context'] = $this->context;
         $this->data_view['slideshow'] = $this->obj_slideshow->pluckSelect();
@@ -121,7 +122,7 @@ class ProductAdminController extends FooController {
             return redirect()->route('products.list', ['user_id' => $user['user_id']]);
 
         }
-        
+
         $items = $this->obj_item->selectItems($params);
 
         // display view
@@ -191,6 +192,7 @@ class ProductAdminController extends FooController {
             'breadcrumb_2' => $this->breadcrumb_2,
             'breadcrumb_3' => $this->breadcrumb_3,
         ));
+        
         return view($this->page_views['admin']['edit'], $this->data_view);
     }
 
@@ -208,7 +210,7 @@ class ProductAdminController extends FooController {
         $is_valid_request = $this->isValidRequest($request);
 
         $id = (int) $request->get('id');
-
+        
         if ($is_valid_request && $this->obj_validator->validate($params)) {// valid data
 
             // update existing item
@@ -232,11 +234,11 @@ class ProductAdminController extends FooController {
 
             // add new item
             } else {
-
+                
                 $item = $this->obj_item->insertItem($params);
-
+   
+                
                 if (!empty($item)) {
-
                     //message
                     return Redirect::route($this->root_router.'.edit', ["id" => $item->id])
                                     ->withMessage(trans($this->plang_admin.'.actions.add-ok'));
@@ -303,8 +305,7 @@ class ProductAdminController extends FooController {
      * @return view config page
      */
     public function config(Request $request) {
-
-
+        
         /**
          * Breadcrumb
          */

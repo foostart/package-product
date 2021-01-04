@@ -5,11 +5,14 @@ use Illuminate\Session\TokenMismatchException;
 /**
  * FRONT
  */
-Route::get('product', [
+Route::get('products', [
     'as' => 'product',
     'uses' => 'Foostart\Product\Controllers\Front\ProductFrontController@index'
 ]);
-
+Route::get('products/edit', [
+    'as' => 'products.detailt',
+    'uses' => 'Foostart\Product\Controllers\Front\ProductFrontController@edit'
+]);
 
 /**
  * ADMINISTRATOR

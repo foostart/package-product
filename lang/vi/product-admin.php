@@ -192,7 +192,7 @@ return [
     |
     */
     'labels' => [
-        'name' => 'Product name',
+        'name' => 'Product name 123',
         'slug' => 'Product slug',
         'overview' => 'Product overview',
         'description' => 'Product description',
@@ -208,6 +208,9 @@ return [
         'no-selected' => 'No selected',
         'status' => 'Status',
         'delete' => 'Delete',
+        'price-product' => 'Price Product',
+        'price-root' => 'Price Root',
+        'price-product-sale' => 'Price Product Sale'
     ],
 
 
