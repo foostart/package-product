@@ -26,14 +26,11 @@
                         </div>
                     </form>
                 </div>
-                <!-- <div class="block-search">
-                    <input class="form-control" type="text" id="myInput" placeholder="Search for names.."><i class="fa fa-search"></i>
-                </div> -->
             </div>
             <div class="col-md-12">
                 <div class="row">
                     @foreach ($items as $item)
-                    <div class="col-12 col-sm-6 col-md-6 col-lg-6">
+                    <div class="col-12 col-sm-4 col-md-4 col-lg-4">
                         <div class="card mb-3">
                             <img class="card-img" src="{{URL::asset($item->product_image)}}" alt="{{$item->product_name}}">
                             <div class="card-img-overlay d-flex justify-content-end" style="display: none !important;">
@@ -66,10 +63,9 @@
         </div>
     </div>
 
-
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="{{asset('packages/foostart/package-product/js/jquery-3.2.1.slim.min.js')}}"></script>
+    <script src="{{asset('packages/foostart/package-product/js/popper.min.js')}}"></script>
+    <script src="{{asset('packages/foostart/package-product/js/bootstrap.min.js')}}"></script>
 </body>
 
 </html>

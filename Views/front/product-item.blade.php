@@ -7,7 +7,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <link href="{{asset('packages/foostart/package-product/css/product-styles.css')}}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="{{asset('packages/foostart/package-product/css/bootstrap.min.css')}}" rel="stylesheet">
 </head>
 
