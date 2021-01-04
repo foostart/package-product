@@ -31,7 +31,7 @@
                 </a>
             </div>
             <div class="col-xl-6 col-lg-6 col-md-6 col-12">
-                <h2 class="ftco-section">{{ $item['product_name'] }}</h2>
+                 <h4 class="ftco-section">{{ $item['product_name'] }}</h4>
                 <span class="price"> Price: {{ $item['product_price'] }} VNĐ</span>
                 <span>Price-root: <del>{{ $item['product_price_root'] }}VNĐ</del></span>
                 <div class="content">
