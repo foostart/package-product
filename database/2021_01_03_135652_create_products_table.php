@@ -21,9 +21,9 @@ class CreateProductsTable extends Migration
             $table->longText('product_description');
             $table->string('product_image', 255);
             $table->string('product_images', 255)->nullable();
-            $table->float('product_price_root', 8, 2); 
-            $table->float('product_price', 8, 2); 
-            $table->float('product_price_sale', 8, 2);
+            $table->float('product_price_root', 8, 2)->nullable(); 
+            $table->float('product_price', 8, 2)->nullable(); 
+            $table->float('product_price_sale', 8, 2)->nullable();
             $table->integer('category_id')->length(11)->unsigned()->nullable(); 
             $table->text('cache_comments')->nullable();
             $table->text('cache_other_products')->nullable(); 
