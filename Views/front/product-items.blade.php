@@ -17,14 +17,18 @@
                 <!-- Search Widget -->
                 <div class="card my-4">
                     <h5 class="card-header">Search</h5>
-                    <form class="card-body" action="/search" method="GET" role="search">
+                    <form class="card-body" action="search" method="GET" role="search">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search for..." name="q">
+                            <input type="text" class="form-control" placeholder="Search for..." name="keyword">
                             <span class="input-group-btn">
-                                <button class="btn btn-secondary" type="submit" style="padding: 20px;margin-top:0px">Go!</button>
+                                <button class="btn btn-secondary" type="submit">Go!</button>
                             </span>
                         </div>
                     </form>
+                    <!-- <form class="example" action="products">
+                            <input type="text" placeholder="Search.." name="keyword">
+                            <button type="submit"><i class="fa fa-search"></i></button>
+                        </form> -->
                 </div>
             </div>
             <div class="col-md-12">

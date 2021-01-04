@@ -74,4 +74,18 @@ class ProductFrontController extends Controller
         
         return view('package-product::front.product-item', $this->data);
     }
+
+    public function searchProduct(Request $request) {
+        //tim theo ki tu
+        $item = Product::query();
+        if ($request->has('keyword')) {
+            $item->where('product_name', 'LIKE', '%' . $request->keyword . '%')
+            ->orWhere('product_description', 'LIKE', '%' . $request->keyword . '%')
+            ->orWhere('product_overview', 'LIKE', '%' . $request->keyword . '%');
+        }
+        $items =  $item->get();
+        return view('package-product::front.product-items', ['items' => $items]);
+
+    }
+
 }

@@ -13,6 +13,10 @@ Route::get('products/edit', [
     'as' => 'products.detailt',
     'uses' => 'Foostart\Product\Controllers\Front\ProductFrontController@edit'
 ]);
+Route::get('search', [
+    'as' => 'products.search',
+    'uses' => 'Foostart\Product\Controllers\Front\ProductFrontController@searchProduct'
+]);
 
 /**
  * ADMINISTRATOR

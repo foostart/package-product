@@ -7,4 +7,134 @@ and open the template in the editor.
     Created on : Feb 21, 2020, 3:58:27 PM
     Author     : thanh_nhuan
 */
-
+.card-body .detail-a{
+    text-decoration: none;
+    color: #000;
+    transition: all ease 0.5s;
+}
+.card-body .detail-a:hover{
+    color: rgb(168, 87, 87);
+}
+.text-success {
+    font-weight: 700;
+}
+/* .block-search {
+    position: relative;
+    padding: 30px 0px;
+}
+.block-search i {
+    position: absolute;
+    display: inline-block;
+    right: 10px;
+    top: 40px;
+    color: #b1b1b1;
+} */
+.number{
+    padding: 10px 0px;
+}
+.bg-title{
+    color: #000;
+}
+.ftco-section{
+    color: #ff6f00;
+    font-weight: 600;
+}
+.rating {
+    color: #bbb;
+}
+.price {
+    font-weight: 700;
+    font-size: 18px;
+    padding-right: 10px;
+}
+.content p {
+    font-size: 16px;
+}
+.fa-star {
+    color: #8afa0a;
+}
+.mr-2{
+    color: #000;
+}
+.box-button a {
+    background: #ed6d16;
+    color: #fff;
+    transition: all ease 0.5s;
+}
+.box-button a:hover {
+    background: #ee333b;
+    color: #fff;
+}
+.img{
+    margin: 20px 0px;
+    border: 1px solid #1e2219;
+}
+.prod-img-bg{
+    position: relative;
+    border: 1px solid #1e2219;
+}
+.img-sale{
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #8afa0a;
+    margin-left: 0px;
+    display: block;
+    text-align: center;
+}
+.img-sale p{
+    line-height: 60px;
+    font-size: 15px;
+    color: #000000;
+    transition: all ease 0.5s;
+    font-weight: 600;
+}
+.overview p{
+    padding: 0;
+    margin: 0;
+    font-weight: 600;
+    color: #000;
+}
+.overview p span{
+    font-weight: 400;
+    color: rgb(160, 146, 146);
+}
+input[type=text], select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    resize: vertical;
+  }
+  
+  input[type=submit] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  input[type=submit]:hover {
+    background-color: #45a049;
+  }
+  
+  .blox-form {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+  }
+  .btn-secondary{
+      margin-top: 12px;
+      padding: 30px 0px;
+  }
+  .card-img{
+      height: 250px;
+  }
